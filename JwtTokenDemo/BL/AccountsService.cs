@@ -13,15 +13,22 @@ namespace JwtTokenDemo.BL
             _jwtRepository = jwtRepository;
         }
 
-        public bool Login(string username, string password)
+        public (bool, Account) Login(string username, string password)
         {
             var account = _jwtRepository.GetAccount(username);
-            if(account == null)
+            if (account == null)
             {
-                return false;
+                return (false, null);
             }
 
-            return VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt);
+            if (VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt))
+            {
+                return (true, account);
+            }
+            else
+            {
+                return (false, null);
+            }
         }
 
         public Account SignupNewAccount(string username, string password)

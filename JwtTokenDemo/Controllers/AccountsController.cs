@@ -10,9 +10,12 @@ namespace JwtTokenDemo.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly IAccountsService _accountsService;
-        public AccountsController(IAccountsService accountsService)
+        private readonly IJwtService _jwtService;
+
+        public AccountsController(IAccountsService accountsService, IJwtService jwtService)
         {
             _accountsService = accountsService;
+            _jwtService = jwtService;
         }
 
         [HttpPost("SignUp")]
@@ -25,7 +28,7 @@ namespace JwtTokenDemo.Controllers
         [HttpPost("Login")]
         public ActionResult Login(AuthRequestDto request)
         {
-            var loginSuccess = _accountsService.Login(request.UserName, request.Password);
+            var (loginSuccess, account) = _accountsService.Login(request.UserName, request.Password);
 
             if (!loginSuccess)
             {
@@ -33,8 +36,8 @@ namespace JwtTokenDemo.Controllers
             }
             else
             {
-                // TODO: generate JWT
-                return Ok();
+                var jwt = _jwtService.GetJwtToken(account.Username, account.Id);
+                return Ok(jwt);
             }
         }
     }
