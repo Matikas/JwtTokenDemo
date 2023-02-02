@@ -21,5 +21,21 @@ namespace JwtTokenDemo.Controllers
             _accountsService.SignupNewAccount(request.UserName, request.Password);
             return Ok();
         }
+
+        [HttpPost("Login")]
+        public ActionResult Login(AuthRequestDto request)
+        {
+            var loginSuccess = _accountsService.Login(request.UserName, request.Password);
+
+            if (!loginSuccess)
+            {
+                return BadRequest("Invalid username or password");
+            }
+            else
+            {
+                // TODO: generate JWT
+                return Ok();
+            }
+        }
     }
 }

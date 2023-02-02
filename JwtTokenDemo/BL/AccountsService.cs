@@ -15,7 +15,13 @@ namespace JwtTokenDemo.BL
 
         public bool Login(string username, string password)
         {
-            throw new NotImplementedException();
+            var account = _jwtRepository.GetAccount(username);
+            if(account == null)
+            {
+                return false;
+            }
+
+            return VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt);
         }
 
         public Account SignupNewAccount(string username, string password)
@@ -43,6 +49,14 @@ namespace JwtTokenDemo.BL
             using var hmac = new HMACSHA512();
             passwordSalt = hmac.Key;
             passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using var hmac = new HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            return computedHash.SequenceEqual(passwordHash);
         }
     }
 }
