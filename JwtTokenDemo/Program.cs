@@ -1,4 +1,6 @@
 using JwtTokenDemo;
+using JwtTokenDemo.BL;
+using JwtTokenDemo.DAL;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<JwtDemoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("JwtDemoDatabase")));
+builder.Services.AddScoped<IJwtRepository, JwtRepository>();
+builder.Services.AddScoped<IAccountsService, AccountsService>();
 
 var app = builder.Build();
 
