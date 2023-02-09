@@ -19,7 +19,7 @@ namespace JwtTokenDemo.BL
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim("sub", accountId.ToString())
+                new Claim(ClaimTypes.NameIdentifier, accountId.ToString())
             };
 
             var secretToken = _configuration.GetSection("Jwt:Key").Value;
